@@ -1,7 +1,7 @@
 // rdmd dau2.d -i1 --deb dau2.d "dmd dau2.d"
 void main(string[] args)
 {
-  import std.stdio, std.getopt, std.process, std.c.stdlib; 
+  import std.stdio, std.getopt, std.process, std.c.stdlib, core.thread; 
   
   auto deb=false, interval=1; 
   auto opts = getopt( args,
@@ -19,15 +19,31 @@ void main(string[] args)
   }
   
   auto cmd = args[$-1], files = args[1..$-1];
-  deb && stderr.writef("watch files: %s;\ncmd = \"%s\";\ninterval = %d sec;\n", files, cmd, interval);
+  auto path = environment.get("PATH", "not present");
+  deb && stderr.writef("watch files: %s;\ncmd: \"%s\";\ninterval: %d sec;\nPATH: %s;\n", files, cmd, interval, path);
+  
+  auto cnt = 0;
+  // создать х-м файл=время
+  // timeLastModified(source)
+  while(true){
+	cnt++;
+	stderr.writef("\n %d => " , cnt);
+	auto changed = false;
+	foreach (file; files){
+	  // если время больше чем из х-м, то changed=true
+	  //auto getAttributes(file);
+	  //deb && stderr.writef("file: %s", file);
+	}  
+    deb && stderr.writef(" (\"%s\") " , cmd);
+	auto pid = spawnShell( cmd);
+	auto status = wait(pid);
+	stderr.writef("status: %d\n", status);
+	Thread.sleep( dur!("seconds")( interval ) );
+  }
 }
 
 
-//auto path = environment["PATH"];
 /*
-auto sh = environment.get("SHELL", "/bin/sh");
-
-environment["foo"] = "bar";
 
 auto dmd = execute(["dmd", "myapp.d"]);
 if (dmd.status != 0) writeln("Compilation failed:\n", dmd.output);
