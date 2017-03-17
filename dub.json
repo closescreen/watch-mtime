@@ -1,0 +1,12 @@
+{
+	"name": "auto-rerun",
+	"authors": [
+		"closescreen"
+	],
+	"dependencies": {
+		"consoled": "~>1.0.4"
+	},
+	"description": "Automatic run compiler when files chenged.",
+	"copyright": "closescreen",
+	"license": "proprietary"
+}
