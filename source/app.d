@@ -3,11 +3,17 @@ void main(string[] args)
   import std.stdio, std.getopt, std.process, std.c.stdlib; // несколько импортов одной строкой
   import core.thread, std.file, std.range.primitives; 
   import colorize : fg, color, cwritef, cwritefln; // импорт конкретных имен из модуля
+  import std.datetime;
   
-  auto deb=false, interval=1, icolr="blue", wcolr="yellow", okcolr="green"; // объявление нескольких переменных 
+    
+  auto deb=false, interval=1, icolr="cyan", wcolr="yellow", okcolr="green"; // объявление нескольких переменных 
   auto opts = getopt( args, // анализ опций из args 
     "i|interval", "interval in seconds between checking", &interval, // i|interval - значит или -i или --interval
-    "d|deb|debug", "show debug messages to stderr", &deb ); // ссылается на значение bool, поэтому работает как флаг
+    "d|deb|debug", "show debug messages to stderr", &deb, 
+    "icolor" , "info color", &icolr,
+	"wcolor" , "warnings color", &wcolr,
+	"okcolor", "ok color", &okcolr,
+    ); // ссылается на значение bool, поэтому работает как флаг
   
   if ( opts.helpWanted ){ // если пользователь использовал -h|--help
     defaultGetoptPrinter( "Usage: ", opts.options ); // печатает opts 
@@ -28,19 +34,22 @@ void main(string[] args)
   deb && cwritef("watch files: %s;\ncmd: \"%s\";\ninterval: %d sec;\nPATH: %s;\n".color(icolr), files, cmd, interval, path);
   
   auto cnt = 0;
-  std.file.SysTime[string] file_times;  // создать х-м файл=>время. Тип SysTime подсмотрен в доке по std.file.
+  SysTime[string] file_times;  // создать х-м файл=>время. Тип SysTime подсмотрен в доке по std.file.
 
   while(true){
 	string[] changed; // массив строк
 
     foreach (f; files){
       auto lm = timeLastModified(f); // функция из std.file
-      if ( f in file_times ){ // оператор in в отношении словаря прверяет наличие ключа
-        file_times[f] == lm || ( changed ~= f ); 
-      }else{
-        changed ~= f; // добавление в массив
-      }
-      file_times[f] = lm; // присвоение элементу массива
+//      if ( f in file_times ){ // оператор in в отношении словаря прверяет наличие ключа
+//        file_times[f] == lm || ( changed ~= f ); 
+//      }else{
+//        changed ~= f; // добавление в массив
+//      }
+	  if ( get( file_times, f, SysTime() ) != lm ){
+		changed ~= f;
+    	file_times[f] = lm; // присвоение элементу массива
+  	  }	
     }
 	
 	if ( !empty(changed) ){ // проверка массива на "не пусто"
