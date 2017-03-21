@@ -41,14 +41,9 @@ void main(string[] args)
 
     foreach (f; files){
       auto lm = timeLastModified(f); // функция из std.file
-//      if ( f in file_times ){ // оператор in в отношении словаря прверяет наличие ключа
-//        file_times[f] == lm || ( changed ~= f ); 
-//      }else{
-//        changed ~= f; // добавление в массив
-//      }
 	  if ( get( file_times, f, SysTime() ) != lm ){
-		changed ~= f;
-    	file_times[f] = lm; // присвоение элементу массива
+		changed ~= f; // добавление в массив
+    		file_times[f] = lm; // присвоение элементу массива
   	  }	
     }
 	
