@@ -1,12 +1,12 @@
 {
-	"name": "auto-rerun",
+	"name": "watch-mtime",
 	"authors": [
 		"closescreen"
 	],
 	"dependencies": {
 		"colorize": "~>1.0.5"
 	},
-	"description": "Automatic run compiler when files chenged.",
+	"description": "Automatic command runner  when your files chenged.",
 	"copyright": "closescreen",
 	"license": "proprietary"
 }
